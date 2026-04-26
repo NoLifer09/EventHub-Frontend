@@ -33,9 +33,10 @@ export const deleteEvent = (id) =>
   axios.delete(`${API}/api/events/${id}`, cfg).then((r) => r.data);
 
 export const revokeInvite = (id) =>
-  axios
-    .post(`${API}/api/events/${id}/revoke-invite`, {}, cfg)
-    .then((r) => r.data);
+  axios.post(`${API}/api/events/${id}/revoke-invite`, {}, cfg).then((r) => r.data);
+
+export const restoreInvite = (id) =>
+  axios.post(`${API}/api/events/${id}/restore-invite`, {}, cfg).then((r) => r.data);
 
 export const updateRsvpStatus = (rsvpId, status) =>
   axios.patch(`${API}/api/rsvp/${rsvpId}/status`, { status }, cfg).then((r) => r.data);

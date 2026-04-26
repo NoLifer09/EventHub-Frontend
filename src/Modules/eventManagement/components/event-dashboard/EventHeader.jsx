@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, MapPin, Share2, Link2Off, ChevronDown, Trash2 } from "lucide-react";
+import { Calendar, MapPin, Share2, Link2Off, Link2, ChevronDown, Trash2, Copy, MessageCircle } from "lucide-react";
 import MoreActionsMenu from "./MoreActionsMenu";
 
 const STATUS_BADGE = {
@@ -11,9 +11,10 @@ const STATUS_BADGE = {
 
 const INVITE_BASE = `${window.location.origin}/event/`;
 
-const EventHeader = ({ event, revoking, settingStatus, onEdit, onRevokeInvite, onSetStatus, onDeleteClick }) => {
+const EventHeader = ({ event, revoking, restoring, settingStatus, onEdit, onRevokeInvite, onRestoreInvite, onSetStatus, onDeleteClick }) => {
   const [showMoreMenu, setShowMoreMenu] = useState(false);
-  const [shareToast, setShareToast] = useState(false);
+  const [showShareMenu, setShowShareMenu] = useState(false);
+  const [copyToast, setCopyToast] = useState(false);
 
   const statusInfo = STATUS_BADGE[event.status] ?? STATUS_BADGE.DRAFT;
   const isLive = event.status === "PUBLISHED";
@@ -27,11 +28,21 @@ const EventHeader = ({ event, revoking, settingStatus, onEdit, onRevokeInvite, o
     hour: "2-digit", minute: "2-digit",
   });
 
-  const handleShareInvite = async () => {
-    if (!event.inviteCode || !event.inviteLinkActive) return;
-    await navigator.clipboard.writeText(`${INVITE_BASE}${event.inviteCode}`);
-    setShareToast(true);
-    setTimeout(() => setShareToast(false), 2000);
+  const inviteUrl = event.inviteCode ? `${INVITE_BASE}${event.inviteCode}` : null;
+
+  const handleCopyLink = async () => {
+    if (!inviteUrl) return;
+    await navigator.clipboard.writeText(inviteUrl);
+    setCopyToast(true);
+    setShowShareMenu(false);
+    setTimeout(() => setCopyToast(false), 2000);
+  };
+
+  const handleWhatsApp = () => {
+    if (!inviteUrl) return;
+    const msg = encodeURIComponent(`You're invited to ${event.title}! RSVP here: ${inviteUrl}`);
+    window.open(`https://wa.me/?text=${msg}`, "_blank");
+    setShowShareMenu(false);
   };
 
   return (
@@ -75,25 +86,60 @@ const EventHeader = ({ event, revoking, settingStatus, onEdit, onRevokeInvite, o
 
         {/* Right: actions */}
         <div className="flex items-center gap-2 flex-wrap">
-          {event.inviteLinkActive ? (
-            <button
-              onClick={onRevokeInvite}
-              disabled={revoking}
-              className="flex items-center gap-2 px-4 py-2 bg-MainYellowBackground border border-MainYellowLine hover:opacity-80 text-MainYellow rounded-lg text-sm font-semibold transition-all disabled:opacity-40"
-            >
-              <Link2Off size={13} />
-              {revoking ? "Revoking..." : "Revoke Link"}
-            </button>
-          ) : (
-            <button
-              onClick={handleShareInvite}
-              disabled={!event.inviteCode}
-              title={!event.inviteCode ? "Publish the event to generate an invite link" : "Copy invite link"}
-              className="flex items-center gap-2 px-4 py-2 bg-MainBlue hover:bg-blue-600 text-white rounded-lg text-sm font-semibold transition-colors disabled:opacity-40"
-            >
-              <Share2 size={13} />
-              {shareToast ? "Copied!" : "Share Invite"}
-            </button>
+
+          {/* Share — always visible when inviteCode exists */}
+          {inviteUrl && (
+            <div className="relative">
+              <button
+                onClick={() => setShowShareMenu((v) => !v)}
+                className="flex items-center gap-2 px-4 py-2 bg-MainBlue hover:bg-blue-600 text-white rounded-lg text-sm font-semibold transition-colors"
+              >
+                <Share2 size={13} />
+                {copyToast ? "Copied!" : "Share Invite"}
+              </button>
+              {showShareMenu && (
+                <>
+                  <div className="fixed inset-0 z-10" onClick={() => setShowShareMenu(false)} />
+                  <div className="absolute right-0 top-full mt-1.5 z-20 bg-NavigationBackground border border-LineBox rounded-xl shadow-xl overflow-hidden w-48">
+                    <button
+                      onClick={handleCopyLink}
+                      className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-MainOffWhiteText hover:bg-MainBackground hover:text-white transition-colors"
+                    >
+                      <Copy size={13} /> Copy Link
+                    </button>
+                    <button
+                      onClick={handleWhatsApp}
+                      className="flex items-center gap-2.5 w-full px-4 py-2.5 text-sm text-MainOffWhiteText hover:bg-MainBackground hover:text-white transition-colors"
+                    >
+                      <MessageCircle size={13} /> Share via WhatsApp
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Revoke / Restore — separate from share */}
+          {!isTerminal && inviteUrl && (
+            event.inviteLinkActive ? (
+              <button
+                onClick={onRevokeInvite}
+                disabled={revoking}
+                className="flex items-center gap-2 px-4 py-2 bg-MainYellowBackground border border-MainYellowLine hover:opacity-80 text-MainYellow rounded-lg text-sm font-semibold transition-all disabled:opacity-40"
+              >
+                <Link2Off size={13} />
+                {revoking ? "Revoking..." : "Revoke Link"}
+              </button>
+            ) : (
+              <button
+                onClick={onRestoreInvite}
+                disabled={restoring}
+                className="flex items-center gap-2 px-4 py-2 bg-MainGreenBackground border border-MainGreenLine hover:opacity-80 text-MainGreen rounded-lg text-sm font-semibold transition-all disabled:opacity-40"
+              >
+                <Link2 size={13} />
+                {restoring ? "Restoring..." : "Restore Link"}
+              </button>
+            )
           )}
 
           {!isTerminal && (

@@ -25,6 +25,7 @@ const EventDashboard = () => {
     currentPage,
     starting,
     revoking,
+    restoring,
     deleting,
     settingStatus,
     setCurrentPage,
@@ -32,6 +33,7 @@ const EventDashboard = () => {
     handleStatusFilterChange,
     handleStartEvent,
     handleRevokeInvite,
+    handleRestoreInvite,
     handleSetStatus,
     handleDeleteEvent,
     handleExport,
@@ -87,9 +89,11 @@ const EventDashboard = () => {
           <EventHeader
             event={event}
             revoking={revoking}
+            restoring={restoring}
             settingStatus={settingStatus}
             onEdit={handleEditEvent}
             onRevokeInvite={handleRevokeInvite}
+            onRestoreInvite={handleRestoreInvite}
             onSetStatus={handleSetStatus}
             onDeleteClick={() => setShowDeleteConfirm(true)}
           />

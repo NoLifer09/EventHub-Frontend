@@ -96,7 +96,7 @@ const manageAttendees = () => {
                   <p className="text-MainOffWhiteText flex flex-row gap-2 font-inter text-sm">
                     {eventInfo?.event?.title}{" "}
                     <span className="hidden md:block">
-                      • {eventInfo?.event?.location}
+                      • {eventInfo?.event?.location?.address ?? eventInfo?.event?.location}
                     </span>
                   </p>
                 </div>

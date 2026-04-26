@@ -7,6 +7,7 @@ import {
   updateEvent,
   deleteEvent,
   revokeInvite,
+  restoreInvite,
   getExportUrl,
   updateRsvpStatus,
   removeRsvp,
@@ -34,6 +35,7 @@ const useEventDashboard = (eventId) => {
 
   const [starting, setStarting] = useState(false);
   const [revoking, setRevoking] = useState(false);
+  const [restoring, setRestoring] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [settingStatus, setSettingStatus] = useState(false);
 
@@ -104,6 +106,23 @@ const useEventDashboard = (eventId) => {
     }
   };
 
+  const handleRestoreInvite = async () => {
+    if (restoring) return;
+    setRestoring(true);
+    try {
+      const data = await restoreInvite(eventId);
+      setEvent((prev) => ({
+        ...prev,
+        inviteLinkActive: data.event.inviteLinkActive,
+        inviteCode: data.event.inviteCode,
+      }));
+    } catch {
+      // no-op
+    } finally {
+      setRestoring(false);
+    }
+  };
+
   const handleSetStatus = async (status) => {
     if (settingStatus) return;
     setSettingStatus(true);
@@ -165,6 +184,7 @@ const useEventDashboard = (eventId) => {
     currentPage,
     starting,
     revoking,
+    restoring,
     deleting,
     settingStatus,
     setCurrentPage,
@@ -172,6 +192,7 @@ const useEventDashboard = (eventId) => {
     handleStatusFilterChange,
     handleStartEvent,
     handleRevokeInvite,
+    handleRestoreInvite,
     handleSetStatus,
     handleDeleteEvent,
     handleExport,
