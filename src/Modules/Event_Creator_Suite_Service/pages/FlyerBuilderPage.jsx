@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
+import { Save } from "lucide-react";
 import FlyerForm from "../components/FlyerForm";
 import FlyerPreview from "../components/FlyerPreview";
+import CustomButton from "../../shared/components/CustomButton";
 import { saveSuiteData } from "../utils/suiteService";
 
 const DEFAULT_FIELDS = {
@@ -25,6 +27,8 @@ const formatDateTime = (event) => {
 const FlyerBuilderPage = ({ event, onSuiteDataSaved }) => {
   const [fields, setFields] = useState(DEFAULT_FIELDS);
   const [template, setTemplate] = useState("modern");
+  const [saving, setSaving] = useState(false);
+  const [saved, setSaved] = useState(false);
   const initializedRef = useRef(false);
   const saveTimerRef = useRef(null);
 
@@ -71,7 +75,35 @@ const FlyerBuilderPage = ({ event, onSuiteDataSaved }) => {
     debouncedSave(fields, newTemplate);
   };
 
+  const handleSaveFlyer = async () => {
+    if (!event?._id || saving) return;
+    setSaving(true);
+    try {
+      const flyerSettings = { fields, template };
+      await saveSuiteData(event._id, { flyerSettings });
+      onSuiteDataSaved?.({ flyerSettings });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 2000);
+    } catch (err) {
+      console.error("Save flyer failed:", err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-SecondOffWhiteText">Changes auto-save · Export captures the flyer image for email attachments</p>
+        <CustomButton
+          title={saved ? "Saved!" : saving ? "Saving..." : "Save Flyer"}
+          icon={Save}
+          onClick={handleSaveFlyer}
+          disabled={saving || !event?._id}
+          className={`text-sm px-4 py-2 border border-LineBox ${saved ? "text-MainGreen border-MainGreenLine" : "text-white hover:border-MainBlue/50"}`}
+        />
+      </div>
+
     <div className="grid grid-cols-[1fr_1.1fr] gap-6 items-start">
       {/* Left — form */}
       <div className="bg-NavigationBackground border border-LineBox rounded-xl p-5 space-y-1">
@@ -101,6 +133,7 @@ const FlyerBuilderPage = ({ event, onSuiteDataSaved }) => {
           }}
         />
       </div>
+    </div>
     </div>
   );
 };

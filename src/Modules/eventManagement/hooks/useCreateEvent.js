@@ -153,20 +153,11 @@ const useCreateEvent = (editEventId = null) => {
         const res = await createEvent(payload);
         event = res.event;
       }
-      setCreatedEvent(event);
-      setStep(3);
+      navigate(`/events/${event._id}`, { state: { event } });
     } catch {
       setError("Failed to publish event.");
     } finally {
       setSaving(false);
-    }
-  };
-
-  const finishAndDashboard = () => {
-    if (createdEvent) {
-      navigate(`/events/${createdEvent._id}`);
-    } else {
-      navigate("/myevents");
     }
   };
 
@@ -183,7 +174,6 @@ const useCreateEvent = (editEventId = null) => {
     backToStep2,
     saveDraft,
     publishAndFinish,
-    finishAndDashboard,
   };
 };
 

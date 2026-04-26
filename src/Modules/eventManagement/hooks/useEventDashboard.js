@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   getEventById,
   getEventAttendees,
@@ -16,9 +16,12 @@ const PAGE_SIZE = 10;
 
 const useEventDashboard = (eventId) => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [event, setEvent] = useState(null);
-  const [loading, setLoading] = useState(true);
+  // Seed from router state (passed after publish) to avoid an extra fetch
+  const seeded = location.state?.event ?? null;
+  const [event, setEvent] = useState(seeded);
+  const [loading, setLoading] = useState(!seeded);
   const [error, setError] = useState(null);
 
   const [attendees, setAttendees] = useState([]);
@@ -34,9 +37,9 @@ const useEventDashboard = (eventId) => {
   const [deleting, setDeleting] = useState(false);
   const [settingStatus, setSettingStatus] = useState(false);
 
-  // Fetch event + rsvpStats
+  // Fetch event + rsvpStats (skip if we already have seeded data from publish)
   useEffect(() => {
-    if (!eventId) return;
+    if (!eventId || seeded) return;
     setLoading(true);
     getEventById(eventId)
       .then((data) => {
@@ -45,7 +48,7 @@ const useEventDashboard = (eventId) => {
       })
       .catch(() => setError("Failed to load event."))
       .finally(() => setLoading(false));
-  }, [eventId]);
+  }, [eventId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Fetch attendees when filters/page change
   const fetchAttendees = useCallback(() => {

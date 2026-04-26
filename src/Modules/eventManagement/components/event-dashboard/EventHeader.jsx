@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Calendar, MapPin, Edit2, Share2, Link2Off, ChevronDown, Trash2 } from "lucide-react";
+import { Calendar, MapPin, Share2, Link2Off, ChevronDown, Trash2 } from "lucide-react";
 import MoreActionsMenu from "./MoreActionsMenu";
 
 const STATUS_BADGE = {
@@ -75,14 +75,6 @@ const EventHeader = ({ event, revoking, settingStatus, onEdit, onRevokeInvite, o
 
         {/* Right: actions */}
         <div className="flex items-center gap-2 flex-wrap">
-          <button
-            onClick={onEdit}
-            className="flex items-center gap-2 px-4 py-2 bg-MainBackground border border-LineBox hover:border-MainBlue/50 text-MainOffWhiteText hover:text-white rounded-lg text-sm transition-colors"
-          >
-            <Edit2 size={13} />
-            Edit
-          </button>
-
           {event.inviteLinkActive ? (
             <button
               onClick={onRevokeInvite}

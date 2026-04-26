@@ -6,14 +6,12 @@ import Footer from "../../shared/components/Footer";
 import StepIndicator from "../components/wizard/StepIndicator";
 import Step1EventDetails from "../components/wizard/Step1EventDetails";
 import Step2CapacityLogic from "../components/wizard/Step2CapacityLogic";
-import Step3InviteGuests from "../components/wizard/Step3InviteGuests";
 import CustomButton from "../../shared/components/CustomButton";
 import useCreateEvent from "../hooks/useCreateEvent";
 
 const STEP_CONTENT = {
   1: (props) => <Step1EventDetails {...props} />,
   2: (props) => <Step2CapacityLogic {...props} />,
-  3: (props) => <Step3InviteGuests {...props} />,
 };
 
 const CreateEvent = () => {
@@ -28,23 +26,16 @@ const CreateEvent = () => {
     initializing,
     goToStep1,
     goToStep2,
-    backToStep2,
     saveDraft,
     publishAndFinish,
-    finishAndDashboard,
   } = useCreateEvent(id ?? null);
 
   const primaryAction = {
     1: { label: "Next Step", onClick: goToStep2, disabled: false },
     2: {
-      label: saving ? "Publishing..." : "Next Step",
+      label: saving ? "Publishing..." : "Publish Event",
       onClick: publishAndFinish,
       disabled: saving,
-    },
-    3: {
-      label: "Finish & Dashboard",
-      onClick: finishAndDashboard,
-      disabled: false,
     },
   }[step];
 
@@ -80,12 +71,12 @@ const CreateEvent = () => {
           <div className="flex items-center justify-between mt-10 pt-6 border-t border-LineBox">
             {/* Back */}
             <div>
-              {(step === 2 || step === 3) && (
+              {step === 2 && (
                 <CustomButton
                   title="Back"
                   icon={ArrowLeft}
                   iconPosition="LEFT"
-                  onClick={step === 2 ? goToStep1 : backToStep2}
+                  onClick={goToStep1}
                   className="text-MainOffWhiteText hover:text-white text-sm"
                 />
               )}

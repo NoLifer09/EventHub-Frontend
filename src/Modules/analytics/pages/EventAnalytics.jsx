@@ -91,7 +91,7 @@ const EventAnalytics = () => {
             shareToast={shareToast}
           />
 
-          <AnalyticsSummaryCards summary={summary} />
+          <AnalyticsSummaryCards summary={summary} capacity={event.capacity} />
 
           <div className="mb-6">
             <ConversionFunnel summary={summary} capacity={event.capacity} />

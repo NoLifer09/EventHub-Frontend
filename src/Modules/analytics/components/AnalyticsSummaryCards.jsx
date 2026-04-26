@@ -1,8 +1,8 @@
-import { Users, UserCheck, UserX, Percent } from "lucide-react";
+import { Users, UserCheck, UserX, BarChart2 } from "lucide-react";
 
 const formatNumber = (n) => (n ?? 0).toLocaleString();
 
-const AnalyticsSummaryCards = ({ summary = {} }) => {
+const AnalyticsSummaryCards = ({ summary = {}, capacity = 0 }) => {
   const {
     totalRSVPs = 0,
     checkIns = 0,
@@ -45,10 +45,10 @@ const AnalyticsSummaryCards = ({ summary = {} }) => {
     },
     {
       key: "capacity",
-      label: "Fill Rate",
-      value: `${capacityUtilization}%`,
-      hint: "of capacity actually attended",
-      Icon: Percent,
+      label: "Attended / Capacity",
+      value: `${formatNumber(checkIns)} / ${formatNumber(capacity)}`,
+      hint: `${capacityUtilization}% of venue capacity filled`,
+      Icon: BarChart2,
       iconBg: "bg-OffRedbackground",
       iconColor: "text-OffRed",
       valueColor: "text-OffRed",

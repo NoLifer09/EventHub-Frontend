@@ -62,7 +62,7 @@ const EventSideBar = ({
       {isLive && (
         <NavLink icon={ScanLine} label="Check-In" active={activeItem === "Check-In"} onClick={() => { navigate(`/checkin/${id}`); setMobileOpen(false); }} />
       )}
-      {(isLive || isCompleted) && (
+      {isCompleted && (
         <NavLink icon={BarChart3} label="Analytics" active={activeItem === "Analytics"} onClick={() => { navigate(`/events/${id}/analytics`); setMobileOpen(false); }} />
       )}
     </>

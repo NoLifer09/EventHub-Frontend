@@ -6,10 +6,12 @@ import useRSVPQuestions from "../hooks/useRSVPQuestions";
 import { saveSuiteData } from "../utils/suiteService";
 
 const TYPE_BADGE = {
-  text:     "text-MainBlue bg-MainBlueBackground border-MainBlueLine",
-  select:   "text-MainGreen bg-MainGreenBackground border-MainGreenLine",
-  checkbox: "text-MainYellow bg-MainYellowBackground border-MainYellowLine",
-  number:   "text-SecondOffWhiteText bg-NavigationBackground border-LineBox",
+  text:             "text-MainBlue bg-MainBlueBackground border-MainBlueLine",
+  multiple_choice:  "text-MainGreen bg-MainGreenBackground border-MainGreenLine",
+  yes_no:           "text-MainYellow bg-MainYellowBackground border-MainYellowLine",
+  select:           "text-MainGreen bg-MainGreenBackground border-MainGreenLine",
+  checkbox:         "text-MainYellow bg-MainYellowBackground border-MainYellowLine",
+  number:           "text-SecondOffWhiteText bg-NavigationBackground border-LineBox",
 };
 
 const RSVPQuestionsSection = ({ event, onSuiteDataSaved }) => {
@@ -55,7 +57,9 @@ const RSVPQuestionsSection = ({ event, onSuiteDataSaved }) => {
     if (!questions?.length) return;
     const text = questions
       .map((q, i) => {
-        let line = `${i + 1}. ${q.question} (${q.required ? "Required" : "Optional"})\n   Type: ${q.type}`;
+        const label = q.label ?? q.question ?? "";
+        const type = q.fieldType ?? q.type ?? "text";
+        let line = `${i + 1}. ${label} (${q.required ? "Required" : "Optional"})\n   Type: ${type}`;
         if (q.options?.length) line += `\n   Options: ${q.options.join(", ")}`;
         return line;
       })
@@ -94,24 +98,28 @@ const RSVPQuestionsSection = ({ event, onSuiteDataSaved }) => {
             <CustomButton title={copied ? "Copied!" : "Copy all"} icon={copied ? Check : Copy} onClick={handleCopyAll} className="text-sm text-SecondOffWhiteText hover:text-white border border-LineBox bg-NavigationBackground" />
           </div>
 
-          {questions.map((q, i) => (
-            <div key={i} className="bg-NavigationBackground border border-LineBox rounded-xl p-4 space-y-2">
-              <div className="flex items-start justify-between gap-3">
-                <p className="text-sm text-MainOffWhiteText font-medium leading-snug">{i + 1}. {q.question}</p>
-                <div className="flex items-center gap-2 shrink-0 pt-0.5">
-                  <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${TYPE_BADGE[q.type] ?? TYPE_BADGE.text}`}>{q.type}</span>
-                  {q.required && <span className="text-xs text-MainRed font-medium">Required</span>}
+          {questions.map((q, i) => {
+            const label = q.label ?? q.question ?? "";
+            const type = q.fieldType ?? q.type ?? "text";
+            return (
+              <div key={i} className="bg-NavigationBackground border border-LineBox rounded-xl p-4 space-y-2">
+                <div className="flex items-start justify-between gap-3">
+                  <p className="text-sm text-MainOffWhiteText font-medium leading-snug">{i + 1}. {label}</p>
+                  <div className="flex items-center gap-2 shrink-0 pt-0.5">
+                    <span className={`text-xs px-2 py-0.5 rounded-full border font-medium ${TYPE_BADGE[type] ?? TYPE_BADGE.text}`}>{type.replace("_", " ")}</span>
+                    {q.required && <span className="text-xs text-MainRed font-medium">Required</span>}
+                  </div>
                 </div>
+                {q.options?.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 pt-1">
+                    {q.options.map((opt, j) => (
+                      <span key={j} className="text-xs px-2.5 py-1 rounded-lg bg-MainBackground border border-LineBox text-SecondOffWhiteText">{opt}</span>
+                    ))}
+                  </div>
+                )}
               </div>
-              {q.options?.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 pt-1">
-                  {q.options.map((opt, j) => (
-                    <span key={j} className="text-xs px-2.5 py-1 rounded-lg bg-MainBackground border border-LineBox text-SecondOffWhiteText">{opt}</span>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
