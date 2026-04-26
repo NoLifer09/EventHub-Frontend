@@ -54,7 +54,9 @@ const EventSideBar = ({
   const navLinks = (
     <>
       <NavLink icon={LayoutDashboard} label="Overview"         active={activeItem === "Overview"}   onClick={() => { navigate(`/events/${id}`); setMobileOpen(false); }} />
-      <NavLink icon={Users}           label="Manage Attendees" active={activeItem === "Attendees"}  onClick={() => { navigate(`/dashboard/${id}`); setMobileOpen(false); }} />
+      {!isCompleted && (
+        <NavLink icon={Users}         label="Manage Attendees" active={activeItem === "Attendees"}  onClick={() => { navigate(`/dashboard/${id}`); setMobileOpen(false); }} />
+      )}
       <NavLink icon={Wand2}           label="Creator Suite"    active={activeItem === "Suite"}      onClick={() => { navigate(`/events/${id}/suite`); setMobileOpen(false); }} />
       {isEditable && (
         <NavLink icon={Edit2} label="Edit Event" active={activeItem === "Edit"} onClick={() => { navigate(`/events/${id}/edit`); setMobileOpen(false); }} />

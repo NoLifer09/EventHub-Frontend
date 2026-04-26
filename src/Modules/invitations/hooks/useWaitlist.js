@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export const useWaitlist = (id, status = "ATTENDING") => {
+// status: "ALL" (default) returns every non-declined RSVP so the organizer can
+// confirm pending/waitlisted guests. Pass a specific status to filter.
+export const useWaitlist = (id, status = "PENDING,WAITLISTED,ATTENDING") => {
   const [rsvpInvitations, setRsvpInvitations] = useState([]);
   const [eventInfo, setEventInfo] = useState();
   const [attendingCount, setAttendingCount] = useState(0);
@@ -56,10 +58,8 @@ export const useWaitlist = (id, status = "ATTENDING") => {
   const fetchCheckedIn = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/rsvp/${id}/checkedIn`,
-        {
-          withCredentials: true,
-        },
+        `${import.meta.env.VITE_API_URL}/api/rsvp/${id}/fetchCheckedUser`,
+        { withCredentials: true },
       );
       setCheckedInCount(response.data.rsvps.length);
     } catch (error) {
@@ -82,12 +82,20 @@ export const useWaitlist = (id, status = "ATTENDING") => {
   const handleMoveToConfirmed = async (selectedGuests, onSuccess) => {
     if (!selectedGuests?.length) return;
     try {
-      const movedGuests = rsvpInvitations.filter((u) =>
-        selectedGuests.includes(u._id),
-      );
+      // Skip those already attending — bulk-update would no-op silently
+      const toUpdate = rsvpInvitations
+        .filter((u) => selectedGuests.includes(u._id) && u.status !== "ATTENDING")
+        .map((u) => u._id);
+
+      if (!toUpdate.length) {
+        onSuccess?.();
+        return;
+      }
+
+      const movedGuests = rsvpInvitations.filter((u) => toUpdate.includes(u._id));
       await axios.patch(
         `${import.meta.env.VITE_API_URL}/api/rsvp/bulk-update`,
-        { rsvpIds: selectedGuests, status: "ATTENDING" },
+        { rsvpIds: toUpdate, status: "ATTENDING" },
         { withCredentials: true },
       );
       movedGuests.forEach((u) => addActivity(u.guestName, "confirmed"));

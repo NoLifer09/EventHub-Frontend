@@ -29,10 +29,10 @@ const AnalyticsHeader = ({ event, onBack, onExport, onShare, shareToast }) => {
             {event?.title ?? "Event"}
           </h1>
           <div className="flex flex-wrap items-center gap-4 text-MainOffWhiteText text-sm">
-            {event?.location && (
+            {(event?.location?.address || typeof event?.location === "string") && (
               <div className="flex items-center gap-1.5">
                 <MapPin size={13} className="text-MainBlue shrink-0" />
-                <span>{event.location}</span>
+                <span>{event.location?.address ?? event.location}</span>
               </div>
             )}
             {formattedDate && (

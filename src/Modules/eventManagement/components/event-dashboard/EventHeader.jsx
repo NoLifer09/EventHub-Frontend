@@ -46,9 +46,9 @@ const EventHeader = ({ event, revoking, restoring, settingStatus, onEdit, onRevo
   };
 
   return (
-    <div className="bg-NavigationBackground border border-LineBox rounded-2xl overflow-hidden mb-6">
+    <div className="bg-NavigationBackground border border-LineBox rounded-2xl mb-6">
       {event.coverImage && (
-        <div className="h-40 w-full relative">
+        <div className="h-40 w-full relative overflow-hidden rounded-t-2xl">
           <img src={event.coverImage} alt={event.title} className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-gradient-to-t from-NavigationBackground/90 to-transparent" />
         </div>

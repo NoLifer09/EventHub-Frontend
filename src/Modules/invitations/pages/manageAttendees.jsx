@@ -198,6 +198,7 @@ const manageAttendees = () => {
                       email={user.guestEmail}
                       joinedTime={timeAgo(user.updatedAt)}
                       positionNum={user.waitlistPosition}
+                      status={user.status}
                       checked={selectedGuests.includes(user._id)}
                       onCheck={() => handleSelectGuest(user._id)}
                       onDelete={() => handleDelete(user._id, user.guestName)}
