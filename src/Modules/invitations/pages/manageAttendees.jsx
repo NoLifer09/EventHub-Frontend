@@ -29,7 +29,21 @@ const manageAttendees = () => {
   const [selectedOption, setSelectedOption] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
+  const [autoAccept, setAutoAccept] = useState(false);
+  useEffect(() => {
+    if (eventInfo?.event?.autoAccept !== undefined) {
+      setAutoAccept(eventInfo.event.autoAccept);
+    }
+  }, [eventInfo]);
 
+  const handleToggleAutoAccept = async () => {
+    const response = await axios.patch(
+      `${import.meta.env.VITE_API_URL}/api/events/${id}/auto-accept`,
+      {},
+      { withCredentials: true },
+    );
+    setAutoAccept(response.data.autoAccept);
+  };
   const handleSelectAll = (e) => {
     setSelectAll(e.target.checked);
     if (e.target.checked) {
@@ -96,7 +110,9 @@ const manageAttendees = () => {
                   <p className="text-MainOffWhiteText flex flex-row gap-2 font-inter text-sm">
                     {eventInfo?.event?.title}{" "}
                     <span className="hidden md:block">
-                      • {eventInfo?.event?.location?.address ?? eventInfo?.event?.location}
+                      •{" "}
+                      {eventInfo?.event?.location?.address ??
+                        eventInfo?.event?.location}
                     </span>
                   </p>
                 </div>
@@ -208,6 +224,16 @@ const manageAttendees = () => {
               </div>
             </div>
 
+            <button
+              onClick={handleToggleAutoAccept}
+              className={`relative w-12 h-6 rounded-full transition-colors duration-300
+    ${autoAccept ? "bg-MainBlue" : "bg-LineBox"}`}
+            >
+              <span
+                className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-all duration-300
+    ${autoAccept ? "left-7" : "left-1"}`}
+              />
+            </button>
             <ManageAttendeesStats
               eventInfo={eventInfo}
               attendingCount={attendingCount}
@@ -221,7 +247,6 @@ const manageAttendees = () => {
               }
               recentActivity={recentActivity}
             />
-
             {/* Bottom mobile */}
             <div className="md:hidden absolute bottom-2 flex w-[80%] flex-col">
               <CustomButton
