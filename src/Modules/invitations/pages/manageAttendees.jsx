@@ -36,11 +36,11 @@ const manageAttendees = () => {
       setAutoAccept(eventInfo.event.autoAccept);
     }
   }, [eventInfo]);
-
   const handleToggleAutoAccept = async () => {
     const response = await axios.patch(
       `${import.meta.env.VITE_API_URL}/api/events/${id}/auto-accept`,
-      { withCredentials: true },
+      {}, 
+      { withCredentials: true }, 
     );
     setAutoAccept(response.data.autoAccept);
   };
