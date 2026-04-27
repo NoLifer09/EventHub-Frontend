@@ -3,7 +3,7 @@ import axios from "axios";
 
 // status: "ALL" (default) returns every non-declined RSVP so the organizer can
 // confirm pending/waitlisted guests. Pass a specific status to filter.
-export const useWaitlist = (id, status = "PENDING,WAITLISTED,ATTENDING") => {
+export const useWaitlist = (id) => {
   const [rsvpInvitations, setRsvpInvitations] = useState([]);
   const [eventInfo, setEventInfo] = useState();
   const [attendingCount, setAttendingCount] = useState(0);
@@ -31,7 +31,7 @@ export const useWaitlist = (id, status = "PENDING,WAITLISTED,ATTENDING") => {
     try {
       setIsLoading(true);
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/rsvp/${id}/${status}`,
+        `${import.meta.env.VITE_API_URL}/api/rsvp/${id}/PENDING`,
         { withCredentials: true },
       );
       setRsvpInvitations(response.data.rsvps);
@@ -84,7 +84,9 @@ export const useWaitlist = (id, status = "PENDING,WAITLISTED,ATTENDING") => {
     try {
       // Skip those already attending — bulk-update would no-op silently
       const toUpdate = rsvpInvitations
-        .filter((u) => selectedGuests.includes(u._id) && u.status !== "ATTENDING")
+        .filter(
+          (u) => selectedGuests.includes(u._id) && u.status !== "ATTENDING",
+        )
         .map((u) => u._id);
 
       if (!toUpdate.length) {
@@ -92,7 +94,9 @@ export const useWaitlist = (id, status = "PENDING,WAITLISTED,ATTENDING") => {
         return;
       }
 
-      const movedGuests = rsvpInvitations.filter((u) => toUpdate.includes(u._id));
+      const movedGuests = rsvpInvitations.filter((u) =>
+        toUpdate.includes(u._id),
+      );
       await axios.patch(
         `${import.meta.env.VITE_API_URL}/api/rsvp/bulk-update`,
         { rsvpIds: toUpdate, status: "ATTENDING" },
