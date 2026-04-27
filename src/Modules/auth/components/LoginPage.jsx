@@ -89,7 +89,7 @@ const LoginPage = () => {
             title="Login"
             icon={ArrowRight}
             iconPosition="RIGHT"
-            className="bg-MainBlue text-white rounded-lg"
+            className="bg-MainBlue text-white rounded-lg w-full h-full"
           />
         </div>
         <div className="flex items-center justify-center gap-2 text-sm">
