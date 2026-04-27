@@ -35,7 +35,7 @@ const SignUpPage = () => {
         navigate("/myevents");
       } catch (err) {
         setServerError(
-          err?.response?.data?.message ?? "Sign up failed. Please try again."
+          err?.response?.data?.message ?? "Sign up failed. Please try again.",
         );
       }
     },
@@ -109,7 +109,7 @@ const SignUpPage = () => {
             title="Sign Up"
             icon={ArrowRight}
             iconPosition="RIGHT"
-            className="bg-MainBlue text-white rounded-lg"
+            className="bg-MainBlue text-white rounded-lg w-full h-full"
           />
         </div>
         <div className="flex items-center justify-center gap-2 text-sm">
