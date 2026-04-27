@@ -11,6 +11,7 @@ import { useWaitlist } from "../hooks/useWaitlist";
 import ManageAttendeesStats from "../components/ManageAttendeesStats";
 import EventSideBar from "../../Event_Creator_Suite_Service/components/EventSideBar";
 import Footer from "../../shared/components/Footer";
+import axios from "axios";
 
 const manageAttendees = () => {
   const { id } = useParams();
@@ -22,7 +23,7 @@ const manageAttendees = () => {
     recentActivity,
     handleMoveToConfirmed,
     handleDelete,
-  } = useWaitlist(id, "PENDING,WAITLISTED,ATTENDING,DECLINED");
+  } = useWaitlist(id);
 
   const [selectAll, setSelectAll] = useState(false);
   const [selectedGuests, setSelectedGuests] = useState([]);
