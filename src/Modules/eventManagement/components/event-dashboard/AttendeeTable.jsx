@@ -2,16 +2,18 @@ import React, { useRef } from "react";
 import { Search, SlidersHorizontal, Download, MoreHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 
 const STATUS_BADGE = {
-  ATTENDING: { label: "Confirmed", style: "bg-MainGreenBackground text-MainGreen" },
+  ATTENDING:  { label: "Confirmed", style: "bg-MainGreenBackground text-MainGreen" },
+  PENDING:    { label: "Pending",   style: "bg-MainBlueBackground text-MainBlue" },
   WAITLISTED: { label: "Waitlisted", style: "bg-MainYellowBackground text-MainYellow" },
-  DECLINED: { label: "Declined", style: "bg-OffRedbackground text-MainRed" },
+  DECLINED:   { label: "Declined",  style: "bg-OffRedbackground text-MainRed" },
 };
 
 const FILTER_OPTIONS = [
-  { value: "", label: "All Statuses" },
-  { value: "ATTENDING", label: "Confirmed" },
+  { value: "",           label: "All Statuses" },
+  { value: "ATTENDING",  label: "Confirmed" },
+  { value: "PENDING",    label: "Pending" },
   { value: "WAITLISTED", label: "Waitlisted" },
-  { value: "DECLINED", label: "Declined" },
+  { value: "DECLINED",   label: "Declined" },
 ];
 
 // Simple avatar from initials
@@ -140,7 +142,7 @@ const AttendeeTable = ({
               </tr>
             ) : (
               attendees.map((a) => {
-                const badge = STATUS_BADGE[a.status] ?? STATUS_BADGE.ATTENDING;
+                const badge = STATUS_BADGE[a.status] ?? STATUS_BADGE.PENDING;
                 return (
                   <tr
                     key={a._id}
