@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import SearchBar from "../../shared/components/SearchBar";
 import GuestBox from "../components/guestBox";
 import { CircleCheck, Users } from "lucide-react";
