@@ -11,6 +11,7 @@ const CheckInBoxGuest = ({
   status,
   onCheckIn,
   onUndo,
+  disabled,
 }) => {
   return (
     <div
