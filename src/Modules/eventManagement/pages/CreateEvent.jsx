@@ -16,6 +16,8 @@ const STEP_CONTENT = {
 
 const CreateEvent = () => {
   const { id } = useParams();
+  const isEditing = !!id;
+
   const {
     step,
     formData,
@@ -33,7 +35,13 @@ const CreateEvent = () => {
   const primaryAction = {
     1: { label: "Next Step", onClick: goToStep2, disabled: false },
     2: {
-      label: saving ? "Publishing..." : "Publish Event",
+      label: saving
+        ? isEditing
+          ? "Saving..."
+          : "Publishing..."
+        : isEditing
+          ? "Save Changes"
+          : "Publish Event",
       onClick: publishAndFinish,
       disabled: saving,
     },
@@ -44,9 +52,11 @@ const CreateEvent = () => {
   if (initializing) {
     return (
       <div className="flex h-screen bg-MainBackground font-inter">
-        <SideNavigationBar activeItem="My Events" />
+        <SideNavigationBar activeItem={isEditing ? "My Events" : "My Events"} />
         <div className="flex-1 flex items-center justify-center">
-          <p className="text-SecondOffWhiteText text-sm">Loading event...</p>
+          <p className="text-SecondOffWhiteText text-sm">
+            {isEditing ? "Loading event..." : "Setting up..."}
+          </p>
         </div>
       </div>
     );
@@ -57,7 +67,19 @@ const CreateEvent = () => {
       <SideNavigationBar activeItem="My Events" />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <StepIndicator step={step} isEditing={!!id} />
+        {/* Header */}
+        <div className="px-8 pt-6 pb-2 border-b border-LineBox">
+          <h1 className="text-white font-jakarta font-black text-xl">
+            {isEditing ? "Edit Event" : "Create Event"}
+          </h1>
+          <p className="text-MainOffWhiteText font-inter text-sm mt-1">
+            {isEditing
+              ? "Update your event details below"
+              : "Fill in the details to create your event"}
+          </p>
+        </div>
+
+        <StepIndicator step={step} isEditing={isEditing} />
 
         <main className="flex-1 overflow-y-auto p-8">
           <StepContent
@@ -90,10 +112,9 @@ const CreateEvent = () => {
                 disabled={saving}
                 className="border border-LineBox text-white text-sm hover:bg-LineBox/50 disabled:opacity-50"
               />
-
               <CustomButton
                 title={primaryAction.label}
-                icon={ArrowRight}
+                icon={step === 1 ? ArrowRight : null}
                 iconPosition="RIGHT"
                 onClick={primaryAction.onClick}
                 disabled={primaryAction.disabled}
