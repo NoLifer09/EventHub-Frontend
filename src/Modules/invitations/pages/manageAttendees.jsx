@@ -22,7 +22,7 @@ const manageAttendees = () => {
     recentActivity,
     handleMoveToConfirmed,
     handleDelete,
-  } = useWaitlist(id, "ALL");
+  } = useWaitlist(id, "PENDING,WAITLISTED,ATTENDING,DECLINED");
 
   const [selectAll, setSelectAll] = useState(false);
   const [selectedGuests, setSelectedGuests] = useState([]);
